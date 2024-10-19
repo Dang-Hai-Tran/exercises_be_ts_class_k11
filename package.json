@@ -1,0 +1,32 @@
+{
+    "name": "typescript-backend-server",
+    "version": "1.0.0",
+    "description": "A backend server written in TypeScript",
+    "main": "dist/index.js",
+    "scripts": {
+        "start": "node dist/src/index.js",
+        "build": "tsc",
+        "dev": "ts-node-dev --respawn src/index.ts",
+        "test": "cross-env NODE_OPTIONS='--import tsx' mocha 'tests/**/*.test.ts'"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.21.0",
+        "mysql2": "^3.11.3",
+        "winston": "^3.14.2"
+    },
+    "devDependencies": {
+        "@types/chai": "^5.0.0",
+        "@types/express": "^5.0.0",
+        "@types/mocha": "^10.0.9",
+        "@types/node": "^22.7.4",
+        "chai": "^5.1.1",
+        "cross-env": "^7.0.3",
+        "mocha": "^10.7.3",
+        "ts-node": "^10.9.2",
+        "ts-node-dev": "^2.0.0",
+        "tsx": "^4.19.1",
+        "typescript": "^5.6.2"
+    }
+}
