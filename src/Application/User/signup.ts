@@ -2,11 +2,13 @@ import { Request, Response } from 'express'
 import { getPool } from '../../Connectors/db'
 import { logger } from '../../Connectors/logger'
 import { hash, generateSalt } from '../utils/hash'
-import { User } from 'src/Domain/user'
-export async function registerHandler(req: Request, res: Response) {
+import { User } from '../../Domain/user'
+import { Response as MyResponse } from '../../Domain/response'
+
+export async function userSignup(req: Request, res: Response) {
     // Check if the request body match the User interface
     if (!User.isValidRegisterRequest(req.body)) {
-        res.status(400).json({ message: 'Invalid request body' })
+        res.status(400).json(new MyResponse('Invalid request body', 'error', 400))
         return
     }
     const { username, password, first_name, last_name, email } = req.body
@@ -26,7 +28,7 @@ export async function registerHandler(req: Request, res: Response) {
             salt VARCHAR(255) NOT NULL,
             first_name VARCHAR(255) NOT NULL,
             last_name VARCHAR(255) NOT NULL,
-            email VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL UNIQUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `)
@@ -35,7 +37,7 @@ export async function registerHandler(req: Request, res: Response) {
         const [existingUser]: any[] = await pool.execute('SELECT * FROM users WHERE username = ?', [username])
 
         if (existingUser.length > 0) {
-            res.status(409).json({ message: 'Username already exists' })
+            res.status(409).json(new MyResponse('Username already exists', 'error', 409))
             return
         }
 
@@ -45,10 +47,10 @@ export async function registerHandler(req: Request, res: Response) {
             [username, hashedPassword, salt, first_name, last_name, email]
         )
 
-        res.status(201).json({ message: 'User registered successfully' })
+        res.status(201).json(new MyResponse('User registered successfully', 'success', 201))
     } catch (error) {
         logger.error('Error during user registration:', error)
-        res.status(500).json({ message: 'Internal server error' })
+        res.status(500).json(new MyResponse('Internal server error', 'error', 500))
     } finally {
         connection.release()
     }

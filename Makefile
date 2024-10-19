@@ -1,24 +1,30 @@
-build-db:
-	docker build -t db-bek11 .
-	docker run -d --name db-bek11 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=bek11 -e MYSQL_USER=datran -e MYSQL_PASSWORD=datran -p 3306:3306 db-bek11
+all: up
 
-start-db:
-	docker start db-bek11
+up:
+	docker compose up -d --build
 
-stop-db:
-	docker stop db-bek11
+down:
+	docker compose down
 
-rm-db:
-	docker stop db-bek11 || true
-	docker rm db-bek11 || true
-	docker rmi db-bek11 || true
-	docker volume rm $(docker volume ls -qf dangling=true) || true
+start:
+	docker compose start
 
-build:
-	npm run build
+stop:
+	docker compose stop
 
-test:
-	npm run test
+restart:
+	docker compose restart
 
-start: build
-	npm run start
+logs:
+	docker compose logs -f
+
+status:
+	docker compose ps
+
+clean:
+	docker compose down --rmi all --volumes --remove-orphans
+	docker system prune -f -a --volumes
+
+re : clean all
+
+.PHONY: all up down start stop restart logs status clean

@@ -2,10 +2,13 @@ import mysql from 'mysql2/promise';
 import { logger } from './logger';
 
 const dbConfig = {
-    host: 'localhost',
+    host: process.env.DB_HOST || 'localhost',
     user: 'datran',
     password: 'datran',
     database: 'bek11',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
 };
 
 let pool: mysql.Pool;
