@@ -22,7 +22,7 @@ async function generateFakeUsers() {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `)
-        for (let i = 0; i < 10000; i++) {
+        for (let i = 0; i < 1000; i++) {
             let username = faker.internet.userName()
             // While username exists, generate a new one
             let [rows]: any = await connection.execute('SELECT * FROM users WHERE username = ?', [username])
@@ -45,7 +45,7 @@ async function generateFakeUsers() {
             )
         }
     } catch (error) {
-        console.error('Error during fake user generation:', error)
+        logger.error('Error generating fake users:', error)
     } finally {
         connection.release()
     }
@@ -57,6 +57,5 @@ generateFakeUsers()
         process.exit(0)
     })
     .catch((error) => {
-        logger.error('Error generating fake users:', error)
         process.exit(1)
     })

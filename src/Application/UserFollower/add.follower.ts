@@ -7,10 +7,6 @@ import { UserFollower } from '../../Domain/user_follower'
 
 export async function addUserFollower(req: Request, res: Response) {
     const { userId, followerId } = req.params
-    if (!UserFollower.isValidUserFollowerRequest({ fk_user_id: userId, fk_follower_id: followerId })) {
-        res.status(400).json(new MyResponse('Invalid request', 'error', 400))
-        return
-    }
 
     const cacheKey = `follower:${userId}`
     const redisClient = getRedisClient()
@@ -26,7 +22,7 @@ export async function addUserFollower(req: Request, res: Response) {
     try {
         // Check if the user_follower table exists, and create it if it doesn't
         await connection.execute(`
-            CREATE TABLE IF NOT EXISTS user_follower (
+            CREATE TABLE IF NOT EXISTS user_followers (
             id INT AUTO_INCREMENT PRIMARY KEY,
             fk_user_id INT NOT NULL,
             fk_follower_id INT NOT NULL,
@@ -35,8 +31,8 @@ export async function addUserFollower(req: Request, res: Response) {
         `)
         // Check if the user is already following the follower
         const [existingFollower]: any[] = await connection.execute(
-            'SELECT * FROM user_follower WHERE fk_user_id = ? AND fk_follower_id = ?',
-            [userId, followerId]
+            'SELECT * FROM user_followers WHERE fk_user_id = ? AND fk_follower_id = ?',
+            [parseInt(userId, 10), parseInt(followerId, 10)]
         )
         if (existingFollower.length > 0) {
             res.status(409).json(new MyResponse('User is already following the follower', 'error', 409))
@@ -44,8 +40,8 @@ export async function addUserFollower(req: Request, res: Response) {
         }
         // Insert the new follower into the database
         await connection.execute(
-            'INSERT INTO user_follower (fk_user_id, fk_follower_id) VALUES (?, ?)',
-            [userId, followerId]
+            'INSERT INTO user_followers (fk_user_id, fk_follower_id) VALUES (?, ?)',
+            [parseInt(userId, 10), parseInt(followerId, 10)]
         )
 
         // Add the follower to the cache
