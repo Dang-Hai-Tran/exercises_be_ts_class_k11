@@ -1,32 +1,29 @@
-import mysql from 'mysql2/promise';
-import { logger } from './logger';
+import mysql from 'mysql2/promise'
+import { logger } from './logger'
 
 const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
     user: 'datran',
     password: 'datran',
     database: 'bek11',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-};
+}
 
-let pool: mysql.Pool;
+let pool: mysql.Pool
 
 export async function connectToDatabase() {
     try {
-        pool = mysql.createPool(dbConfig);
-        logger.info('Connected to the MySQL database.');
-        return pool;
+        pool = mysql.createPool(dbConfig)
+        logger.info('Connected to the MySQL database.')
+        return pool
     } catch (error) {
-        logger.error('Error connecting to the MySQL database.', error);
-        throw error;
+        logger.error('Error connecting to the MySQL database.', error)
+        throw error
     }
 }
 
 export function getPool() {
     if (!pool) {
-        throw new Error('Database pool not initialized.');
+        throw new Error('Database pool not initialized.')
     }
-    return pool;
+    return pool
 }

@@ -1,7 +1,7 @@
 export interface IResponse {
     message: string
     status: 'success' | 'error'
-    code: number,
+    code: number
     data?: any
 }
 

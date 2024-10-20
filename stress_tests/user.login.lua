@@ -3,7 +3,7 @@ wrk.headers["Content-Type"] = "application/json"
 
 wrk.body = [[
 {
-    "username": "tony",
-    "password": "tony"
+    "username": "Bridgette68",
+    "password": "naacEXK14c8hJLR"
 }
 ]]
